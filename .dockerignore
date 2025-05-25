@@ -1,0 +1,7 @@
+.github/
+.vs/
+.vscode/
+obj/
+bin/
+.gitignore
+Dockerfile
