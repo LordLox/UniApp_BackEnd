@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
+using Microsoft.Extensions.Diagnostics.HealthChecks; // Required for Health Checks
+using Microsoft.AspNetCore.Diagnostics.HealthChecks; // Required for HealthCheckOptions
+using System.Text.Json; // Required for custom health check response
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +34,7 @@ builder.Services.AddCors(options =>
                       });
 });
 
-//builder.Services.ConfigureHttpJsonOptions(options =>
-//{
-//    options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-//});
+builder.Services.AddHealthChecks();
 
 // Register services
 builder.Services.AddScoped<UsersService>();
@@ -61,6 +61,34 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(BacKOfficeAllowCors);
+
+// ***** Map Health Check Endpoint *****
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true, // Include all health checks
+    ResponseWriter = async (context, report) =>
+    {
+        var result = JsonSerializer.Serialize(
+            new
+            {
+                status = report.Status.ToString(),
+                checks = report.Entries.Select(e => new
+                {
+                    name = e.Key,
+                    status = e.Value.Status.ToString(),
+                    description = e.Value.Description,
+                    duration = e.Value.Duration.ToString(),
+                    exception = e.Value.Exception?.Message,
+                    data = e.Value.Data
+                }),
+                totalDuration = report.TotalDuration.ToString()
+            },
+            new JsonSerializerOptions { WriteIndented = true }
+        );
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(result);
+    }
+});
 
 // Install database and generate first user
 using (var scope = app.Services.CreateScope())
