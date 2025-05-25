@@ -171,7 +171,7 @@ public class EventsService(IDbContextFactory<ApplicationContext> contextFactory,
                        && e.EntryDate <= DateTimeOffset.FromUnixTimeSeconds(dayTsEnd)
                     select new HistoryDto
                     {
-                        EventEntryDate = TimeZoneInfo.ConvertTimeFromUtc(e.EntryDate, tz).ToString(ct),
+                        EventEntryDate = TimeZoneInfo.ConvertTimeFromUtc(e.EntryDate, tz),
                         EventName = e2.Name,
                         UserBirthName = u.Name,
                         UserName = u.Username,
@@ -203,7 +203,7 @@ public class EventsService(IDbContextFactory<ApplicationContext> contextFactory,
                        && eu_join.EntryDate <= endDateUtc
                     select new HistoryDto // HistoryDto structure: EventName, UserBirthName (Student's Name), UserName (Student's Username), UserBadge, EventEntryDate
                     {
-                        EventEntryDate = TimeZoneInfo.ConvertTimeFromUtc(eu_join.EntryDate, tz).ToString(ct.DateTimeFormat),
+                        EventEntryDate = TimeZoneInfo.ConvertTimeFromUtc(eu_join.EntryDate, tz),
                         EventName = e_join.Name,
                         UserBirthName = u_student.Name,    // This is the student's own full name
                         UserName = u_student.Username, // This is the student's own username

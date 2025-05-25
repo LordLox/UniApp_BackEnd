@@ -5,5 +5,5 @@ public class HistoryDto
     public string UserBirthName { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;
     public int UserBadge { get; set; }
-    public string EventEntryDate { get; set; } = string.Empty;
+    public DateTime EventEntryDate { get; set; }
 }
