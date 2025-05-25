@@ -37,7 +37,7 @@ RUN apt-get update && \
 
 # Set the entry point for the container
 # This command will be executed when the container starts
-ENTRYPOINT ["dotnet", "BackEnd.dll"] # Assuming your main DLL is BackEnd.dll
+ENTRYPOINT ["dotnet", "BackEnd.dll"]
 
 # Expose the port on which the application will run
 # This informs Docker that the container listens on this port
